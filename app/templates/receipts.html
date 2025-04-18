@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Receipts{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-dark">🧾 All Receipts</h2>
+        <a href="{{ url_for('main.sales') }}" class="btn btn-primary shadow-sm">➕ Make New Sale</a>
+    </div>
+
+    {% if receipts %}
+    <div class="card shadow-sm rounded-4">
+        <div class="card-body table-responsive">
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col"># Receipt ID</th>
+                        <th scope="col">💰 Amount (Ksh)</th>
+                        <th scope="col">🗓️ Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for receipt in receipts %}
+                    <tr>
+                        <td><strong>#{{ receipt.id }}</strong></td>
+                        <td>Ksh {{ "{:,.2f}".format(receipt.amount) }}</td>
+                        <td>{{ receipt.date.strftime('%d %b %Y, %I:%M %p') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info mt-3" role="alert">
+        📭 No receipts found. Make a sale to generate receipts.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3>Revenue Report</h3>
+
+    <!-- Flash Message for Success -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert alert-success" role="alert">
+                {{ messages[0][0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Total Revenue</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Total Revenue:</strong> Ksh {{ total_revenue }}</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <h5>Monthly Revenue Breakdown</h5>
+    <div class="card">
+        <div class="card-header">
+            <h6>Revenue for the Past 6 Months</h6>
+        </div>
+        <div class="card-body">
+            <canvas id="monthlyRevenueChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <hr>
+
+    <h5>Products Sold Breakdown</h5>
+    <div class="card">
+        <div class="card-header">
+            <h6>Top 5 Products Sold</h6>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity Sold</th>
+                        <th>Total Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in top_products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.total_quantity }}</td>
+                            <td>Ksh {{ product.total_revenue }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+<!-- Script for Chart.js (Monthly Revenue Chart) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data for the monthly revenue chart
+    var monthlyRevenueData = {{ monthly_revenue|tojson }};
+    var months = {{ months|tojson }};
+    
+    var ctx = document.getElementById('monthlyRevenueChart').getContext('2d');
+    var monthlyRevenueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Monthly Revenue',
+                data: monthlyRevenueData,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>

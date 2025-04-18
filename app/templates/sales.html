@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h3 class="mb-4">Sales Records</h3>
+
+    <!-- Add Sale Button -->
+    <div class="mb-3 text-end">
+        <a href="{{ url_for('main.add_sale') }}" class="btn btn-success">
+            <i class="fa fa-plus"></i> Add New Sale
+        </a>
+    </div>
+
+    <!-- Filter Section -->
+    <form method="GET" action="{{ url_for('main.sales') }}" class="row g-3 mb-4">
+        <div class="col-md-5">
+            <label for="filter_date" class="form-label">Filter by Date:</label>
+            <input type="date" id="filter_date" name="filter_date"
+                   value="{{ request.args.get('filter_date') }}" class="form-control">
+        </div>
+        <div class="col-md-5">
+            <label for="filter_amount" class="form-label">Filter by Amount:</label>
+            <input type="number" id="filter_amount" name="filter_amount"
+                   value="{{ request.args.get('filter_amount') }}" class="form-control">
+        </div>
+        <div class="col-md-2 align-self-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fa fa-search"></i> Filter
+            </button>
+        </div>
+    </form>
+
+    <!-- Sales Table -->
+    {% if sales %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Amount (KES)</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in sales %}
+                        <tr>
+                            <td>{{ sale.id }}</td>
+                            <td>{{ sale.user.username }}</td>
+                            <td>{{ sale.product.name }}</td>
+                            <td>{{ sale.quantity }}</td>
+                            <td>{{ "{:,.2f}".format(sale.amount) }}</td>
+                            <td>{{ sale.date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <a href="{{ url_for('main.view_sale', sale_id=sale.id) }}" class="btn btn-info btn-sm">View</a>
+                                <a href="{{ url_for('main.edit_sale', sale_id=sale.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="{{ url_for('main.delete_sale', sale_id=sale.id) }}"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Are you sure you want to delete this sale?')">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-warning">No sales records found.</div>
+    {% endif %}
+
+    <!-- Navigation Buttons -->
+    <div class="mt-4">
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+            <i class="fa fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <a href="{{ url_for('main.logout') }}" class="btn btn-danger float-end">
+            <i class="fa fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+
+</div>
+{% endblock %}

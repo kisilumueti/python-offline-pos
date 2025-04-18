@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3>Edit Sale</h3>
+
+    <!-- Flash Message for Success -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert alert-success" role="alert">
+                {{ messages[0][0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Sale Edit Form -->
+    <form method="POST" action="{{ url_for('main.edit_sale', sale_id=sale.id) }}">
+        <div class="form-group">
+            <label for="customer">Customer:</label>
+            <input type="text" class="form-control" id="customer" value="{{ sale.user.username }}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="product">Product:</label>
+            <select class="form-control" id="product" name="product_id" required>
+                {% for product in products %}
+                    <option value="{{ product.id }}" {% if product.id == sale.product_id %}selected{% endif %}>
+                        {{ product.name }} (Ksh {{ product.price }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="quantity">Quantity Sold:</label>
+            <input type="number" id="quantity" name="quantity" class="form-control" value="{{ sale.quantity }}" required min="1" placeholder="Enter quantity sold">
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Amount (Total):</label>
+            <input type="text" id="amount" name="amount" class="form-control" readonly value="Ksh {{ sale.amount }}">
+        </div>
+
+        <div class="form-group">
+            <label for="date">Sale Date:</label>
+            <input type="date" id="date" name="date" class="form-control" value="{{ sale.date.strftime('%Y-%m-%d') }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-warning">Update Sale</button>
+        <a href="{{ url_for('main.sales') }}" class="btn btn-secondary">Back to Sales</a>
+    </form>
+
+    <hr>
+
+    <h5>Tips:</h5>
+    <ul>
+        <li>Review the details before submitting the changes.</li>
+        <li>You can adjust the quantity and the product being sold.</li>
+        <li>The total amount will be updated based on the selected product price and quantity.</li>
+    </ul>
+
+{% endblock %}
+
+<!-- Script to Calculate Total Amount -->
+<script>
+    // Update the amount field when quantity or product is changed
+    document.getElementById('quantity').addEventListener('input', function() {
+        var productSelect = document.getElementById('product');
+        var selectedProductId = productSelect.options[productSelect.selectedIndex].value;
+        var quantity = this.value;
+
+        if (selectedProductId && quantity) {
+            var selectedProductPrice = productSelect.options[productSelect.selectedIndex].dataset.price;
+            var totalAmount = (selectedProductPrice * quantity).toFixed(2);
+            document.getElementById('amount').value = 'Ksh ' + totalAmount;
+        }
+    });
+</script>

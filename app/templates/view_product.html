@@ -1,0 +1,12 @@
+<!-- templates/view_product.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Product Details</h2>
+    <p><strong>Name:</strong> {{ product.name }}</p>
+    <p><strong>Price:</strong> KES {{ product.price }}</p>
+    <p><strong>Description:</strong> {{ product.description }}</p>
+    <a href="{{ url_for('main.products') }}" class="btn btn-secondary">Back to Products</a>
+</div>
+{% endblock %}

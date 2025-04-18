@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <nav class="col-md-2 d-none d-md-block bg-dark sidebar text-white shadow-lg">
+            <div class="sidebar-sticky pt-3">
+                <h5 class="text-info mb-3">📌 Navigation</h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('main.sales') }}">🧾 Make Sale</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('main.products') }}">📦 Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('main.receipts') }}">🧾 Receipts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('main.revenue') }}">📈 Revenue</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('main.employees') }}">👨‍💼 Employees</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Dashboard Content -->
+        <main role="main" class="col-md-10 ml-sm-auto px-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                <h2>Welcome, {{ current_user.username }} 👋</h2>
+                <span class="text-muted">Your POS summary at a glance</span>
+            </div>
+
+            <!-- Statistic Cards -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary shadow-sm rounded-4">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Sales Today</h6>
+                            <h3>{{ total_sales_today }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-success shadow-sm rounded-4">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Employees</h6>
+                            <h3>{{ total_employees }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-danger shadow-sm rounded-4">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Receipts</h6>
+                            <h3>{{ total_receipts }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Chart with Plotly -->
+            <div class="card shadow rounded-4">
+                <div class="card-header bg-transparent border-bottom-0">
+                    <h4 class="mb-0">📊 Monthly Revenue (Ksh)</h4>
+                </div>
+                <div class="card-body">
+                    <div id="revenue-plot"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Plotly JS CDN -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<!-- Plotly Chart Script -->
+<script>
+    const revenueData = {{ monthly_revenue | tojson }};
+    const months = Object.keys(revenueData);
+    const values = Object.values(revenueData);
+
+    const trace = {
+        x: months,
+        y: values,
+        type: 'scatter',
+        mode: 'lines+markers',
+        marker: { color: '#1f77b4', size: 10 },
+        line: { shape: 'spline' },
+        fill: 'tozeroy',
+        name: 'Monthly Revenue'
+    };
+
+    const layout = {
+        title: 'Monthly Revenue Overview',
+        xaxis: { title: 'Month' },
+        yaxis: { title: 'Revenue (Ksh)' },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { family: 'Poppins, sans-serif' }
+    };
+
+    Plotly.newPlot('revenue-plot', [trace], layout, {responsive: true});
+</script>
+{% endblock %}

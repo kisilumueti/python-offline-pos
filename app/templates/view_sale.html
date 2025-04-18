@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3>Sale Details</h3>
+
+    <!-- Display Sale Information -->
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <td>{{ sale.id }}</td>
+        </tr>
+        <tr>
+            <th>Customer</th>
+            <td>{{ sale.user.username }}</td>
+        </tr>
+        <tr>
+            <th>Product</th>
+            <td>{{ sale.product.name }}</td>
+        </tr>
+        <tr>
+            <th>Quantity</th>
+            <td>{{ sale.quantity }}</td>
+        </tr>
+        <tr>
+            <th>Amount</th>
+            <td>{{ sale.amount }}</td>
+        </tr>
+        <tr>
+            <th>Date</th>
+            <td>{{ sale.date }}</td>
+        </tr>
+    </table>
+
+    <a href="{{ url_for('main.sales') }}" class="btn btn-secondary">Back to Sales</a>
+    <a href="{{ url_for('main.edit_sale', sale_id=sale.id) }}" class="btn btn-warning">Edit Sale</a>
+    <a href="{{ url_for('main.delete_sale', sale_id=sale.id) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this sale?')">Delete Sale</a>
+{% endblock %}
